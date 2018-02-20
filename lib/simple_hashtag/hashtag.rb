@@ -1,6 +1,6 @@
 module SimpleHashtag
   class Hashtag < ActiveRecord::Base
-    self.table_name = "simple_hashtag_hashtags"
+    self.table_name = 'simple_hashtag_hashtags'
 
     has_many :hashtaggings
 
@@ -8,18 +8,18 @@ module SimpleHashtag
 
     # 日本語を対応するために使用したRegex: https://gist.github.com/terrancesnyder/1345094
 
-    # TODO Beef up the regex (ie.:what if content is HTML)
+    # TODO: Beef up the regex (ie.:what if content is HTML)
     # this is how Twitter does it:
     # https://github.com/twitter/twitter-text-rb/blob/master/lib/twitter-text/regex.rb
-    HASHTAG_REGEX = /(?:\s|^)([#|＃](?!(?:\d+|\w+?_|_\w+?)(?:\s|$))([一-龯０-９Ａ-ｚｧ-ﾝﾞﾟぁ-んァ-ンa-z0-9\-_]+))/i
+    HASHTAG_REGEX = /(?:\s|　|^)([#|＃|#](?!(?:\d+|\w+?_|_\w+?)(?:\s|$))([一-龯０-９Ａ-ｚｧ-ﾝﾞﾟぁ-んァ-ンa-z0-9\-_]+))/i
 
     def self.find_by_name(name)
-      Hashtag.where("lower(name) =?", name.downcase).first
+      Hashtag.where('lower(name) =?', name.downcase).first
     end
+
     def self.find_or_create_by_name(name, &block)
       find_by_name(name) || create(name: name, &block)
     end
-
 
     def name=(val)
       write_attribute(:name, val.downcase)
@@ -30,17 +30,17 @@ module SimpleHashtag
     end
 
     def hashtaggables
-      self.hashtaggings.includes(:hashtaggable).collect { |h| h.hashtaggable }
+      hashtaggings.includes(:hashtaggable).collect(&:hashtaggable)
     end
 
     def hashtagged_types
-      self.hashtaggings.pluck(:hashtaggable_type).uniq
+      hashtaggings.pluck(:hashtaggable_type).uniq
     end
 
     def hashtagged_ids_by_types
       hashtagged_ids ||= {}
-      self.hashtaggings.each do |h|
-        hashtagged_ids[h.hashtaggable_type] ||= Array.new
+      hashtaggings.each do |h|
+        hashtagged_ids[h.hashtaggable_type] ||= []
         hashtagged_ids[h.hashtaggable_type] << h.hashtaggable_id
       end
       hashtagged_ids
@@ -54,11 +54,11 @@ module SimpleHashtag
       name
     end
 
-    def self.clean_orphans # From DB
-      # TODO Make this method call a single SQL query
-      orphans = self.all.select { |h| h.hashtaggables.size == 0 }
+    # From DB
+    def self.clean_orphans
+      # TODO: Make this method call a single SQL query
+      orphans = all.select { |h| h.hashtaggables.empty? }
       orphans.map(&:destroy)
     end
-
   end
 end
