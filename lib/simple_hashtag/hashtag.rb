@@ -8,10 +8,22 @@ module SimpleHashtag
 
     # 日本語を対応するために使用したRegex: https://gist.github.com/terrancesnyder/1345094
 
-    # TODO: Beef up the regex (ie.:what if content is HTML)
-    # this is how Twitter does it:
-    # https://github.com/twitter/twitter-text-rb/blob/master/lib/twitter-text/regex.rb
-    HASHTAG_REGEX = /(?:|^)([#]([ゝヽゞヾ〱〲々〃ー−０-９ｦ-ﾟァ-ヶぁ-ゞＡ-ｚ一-龯a-z0-9\-_]+))/i
+    # http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
+    # Basic Latin: \u0000-\u00FF
+    # Arrows: \u2190-\u21FF
+    # Various Symbols: \u2600-\u26FF
+    # Geometric Shapes: \u25A0-\u25FF
+    # Mathematical Operators: \u2200-\u22FF
+    # Radicals: \u2E80-\u2FDF
+    # Common Punctuation: \u2000-\u206F
+    # CJK Symbols: \u3001-\u303F
+    # Unicode Hiragana: \u3040-\u309F
+    # Unicode Katakana (including Phonetics): \u30A0-\u31FF
+    # Unicode Kanbun: \u3190-\u319F
+    # Full- & Half Width: \uFF00-\uFFEF
+    # Common used Kanji: \u4e00-\u9faf
+
+    HASHTAG_REGEX = /(?:|^)([#]([“‐々〇〻①-⑳Ⅰ-ⅹa-z0-9\u2190-\u21FF\u2600-\u26FF\u25A0-\u25FF\u2200-\u22FF\u2E80-\u2FDF\u3001-\u303F\u2000-\u206F\u3040-\u309F\u30A0-\u30FF\u3190-\u319F\uFF00-\uFFEF\u4e00-\u9faf)])+)/i
 
     def self.find_by_name(name)
       Hashtag.where('lower(name) =?', name.downcase).first
