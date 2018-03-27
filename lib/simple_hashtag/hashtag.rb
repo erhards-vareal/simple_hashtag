@@ -23,7 +23,7 @@ module SimpleHashtag
     # Full- & Half Width: \uFF00-\uFFEF
     # Common used Kanji: \u4e00-\u9faf
 
-    HASHTAG_REGEX = /(?:|^)([#]([“‐々〇〻①-⑳Ⅰ-ⅹa-z0-9\u2190-\u21FF\u2600-\u26FF\u25A0-\u25FF\u2200-\u22FF\u2E80-\u2FDF\u3001-\u303F\u2000-\u206F\u3040-\u309F\u30A0-\u30FF\u3190-\u319F\uFF00-\uFFEF\u4e00-\u9faf)])+)/i
+    HASHTAG_REGEX = /(?:|^)([#]([-“々〇〻①-⑳Ⅰ-ⅹa-z0-9\u2190-\u21FF\u2600-\u26FF\u25A0-\u25FF\u2200-\u22FF\u2E80-\u2FDF\u3001-\u303F\u2000—\u206F\u3040-\u309F\u30A0-\u30FF\u3190-\u319F\uFF00-\uFFEF\u4e00-\u9faf)])+)/i
 
     def self.find_by_name(name)
       Hashtag.where('lower(name) =?', name.downcase).first
